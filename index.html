@@ -3,179 +3,67 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Name Search | Simple One-Page App</title>
+  <title>WOLM CAMP TRACKER 2025</title>
   <style>
     :root{
-      --bg:#0f172a;        /* slate-900 */
-      --panel:#111827;     /* gray-900 */
-      --muted:#94a3b8;     /* slate-400 */
-      --text:#e5e7eb;      /* gray-200 */
-      --accent:#22d3ee;    /* cyan-400 */
-      --ring:rgba(34,211,238,.35);
-      --chip:#1f2937;      /* gray-800 */
+      --bg:#0f172a; --panel:#111827; --muted:#94a3b8; --text:#e5e7eb;
+      --accent:#22d3ee; --ring:rgba(34,211,238,.35); --chip:#1f2937;
     }
     *{box-sizing:border-box}
     body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
-      background:linear-gradient(180deg,#0b1220, var(--bg));
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:32px 16px;
+      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
+      background:linear-gradient(180deg,#0b1220,var(--bg));color:var(--text);min-height:100vh;
+      display:flex;align-items:center;justify-content:center;padding:32px 16px;
     }
-    .app{
-      width:min(1100px,100%);
-      background:linear-gradient(180deg,#0b0f1a, var(--panel));
-      border:1px solid #1f2937;
-      border-radius:18px;
-      padding:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    .header{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
-      margin-bottom:16px;
-    }
-    .title{
-      font-weight:700;
-      letter-spacing:.3px;
-      font-size:20px;
-    }
+    .app{width:min(1100px,100%);background:linear-gradient(180deg,#0b0f1a,var(--panel));
+      border:1px solid #1f2937;border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04)}
+    .header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+    .title{font-weight:700;letter-spacing:.3px;font-size:20px}
     .muted{color:var(--muted)}
-    .searchbar{
-      display:flex;
-      gap:10px;
-      margin:10px 0 6px;
-      width:100%;
-    }
+    .searchbar{display:flex;gap:10px;margin:10px 0 6px;width:100%}
     .searchbar input{
-      flex:1;
-      padding:14px 14px 14px 44px;
-      border-radius:12px;
-      border:1px solid #374151;
-      background:#0b1020;
-      color:var(--text);
-      outline:none;
-      font-size:16px;
-      transition:box-shadow .15s, border-color .15s;
+      flex:1;padding:14px 14px 14px 44px;border-radius:12px;border:1px solid #374151;background:#0b1020;color:var(--text);
+      outline:none;font-size:16px;transition:box-shadow .15s,border-color .15s;
       background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>');
-      background-repeat:no-repeat;
-      background-position:12px center;
+      background-repeat:no-repeat;background-position:12px center;
     }
-    .searchbar input:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 4px var(--ring);
-    }
-    .btn{
-      border:1px solid #334155;
-      background:#0b1020;
-      color:var(--text);
-      padding:12px 14px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:600;
-      transition:transform .05s ease, background .15s ease, border-color .15s ease;
-      white-space:nowrap;
-    }
+    .searchbar input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--ring)}
+    .btn{border:1px solid #334155;background:#0b1020;color:var(--text);padding:12px 14px;border-radius:12px;cursor:pointer;font-weight:600;transition:transform .05s,background .15s,border-color .15s;white-space:nowrap}
     .btn:hover{background:#111827;border-color:#3b455a}
     .btn:active{transform:translateY(1px)}
-    .meta{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin:6px 2px 14px;
-      font-size:14px;
-      color:var(--muted);
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .tags{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .chip{
-      background:var(--chip);
-      border:1px solid #263142;
-      color:#cfd8e3;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      letter-spacing:.2px;
-    }
-    .list{
-      border:1px solid #243041;
-      border-radius:14px;
-      overflow:hidden;
-      background:#0b1020;
-      max-height:65vh;
-      overflow:auto;
-      scroll-behavior:smooth;
-    }
-    .row{
-      padding:12px 16px;
-      border-bottom:1px solid #1b2636;
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
+    .meta{display:flex;justify-content:space-between;align-items:center;margin:6px 2px 14px;font-size:14px;color:var(--muted);gap:8px;flex-wrap:wrap}
+    .tags{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:var(--chip);border:1px solid #263142;color:#cfd8e3;padding:6px 10px;border-radius:999px;font-size:12px;letter-spacing:.2px}
+    .list{border:1px solid #243041;border-radius:14px;overflow:hidden;background:#0b1020;max-height:65vh;overflow:auto;scroll-behavior:smooth}
+    .row{padding:12px 16px;border-bottom:1px solid #1b2636;display:flex;gap:10px;align-items:center}
     .row:last-child{border-bottom:none}
-    .idx{
-      width:56px;
-      text-align:right;
-      color:#7c8aa6;
-      font-variant-numeric:tabular-nums;
-      flex:0 0 56px;
-    }
+    .idx{width:56px;text-align:right;color:#7c8aa6;font-variant-numeric:tabular-nums;flex:0 0 56px}
     .name{flex:1}
-    mark{
-      background:rgba(34,211,238,.18);
-      color:#d9fbff;
-      padding:0 2px;
-      border-radius:4px;
-    }
-    .footer{
-      margin-top:14px;
-      font-size:12px;
-      color:var(--muted);
-      text-align:center;
-    }
-    @media (max-width:600px){
-      .idx{display:none}
-      .title{font-size:18px}
-    }
+    mark{background:rgba(34,211,238,.18);color:#d9fbff;padding:0 2px;border-radius:4px}
+    .footer{margin-top:14px;font-size:12px;color:var(--muted);text-align:center}
+    @media (max-width:600px){.idx{display:none}.title{font-size:18px}}
   </style>
 </head>
 <body>
   <main class="app" role="main">
     <div class="header">
-      <div class="title">Name Search</div>
-      <div class="muted">Type to filter • Accent-insensitive • Instant results</div>
+      <div class="title">WOLM CAMP NAME TRACKER 2025</div>
     </div>
 
     <div class="searchbar" role="search">
-      <input id="q" type="search" placeholder="Search names (e.g. 'semillano', 'jóy', 'Legaspi')" autocomplete="off" />
+      <input id="q" type="search" placeholder="Search names (e.g. 'Semillano', 'Güell', 'Legaspi')" autocomplete="off" />
       <button class="btn" id="clearBtn" aria-label="Clear search">Clear</button>
     </div>
 
     <div class="meta" aria-live="polite">
       <div id="count" class="muted">Loading…</div>
-      <div class="tags">
-        <span class="chip" title="Total names in the dataset"><strong id="total">0</strong> total</span>
-        <span class="chip" id="uniqueChip" title="Unique names (exact string)"><strong id="unique">0</strong> unique</span>
-        <span class="chip" title="Search mode">contains • case & accent insensitive</span>
-      </div>
+
     </div>
 
     <section class="list" id="results" role="list" aria-label="Search results"></section>
 
     <div class="footer">
-      Built with HTML + CSS + jQuery. Keyboard tip: press <kbd>Esc</kbd> to clear.
+      Built for WOLM Camp 2025
     </div>
   </main>
 
@@ -184,633 +72,86 @@
   <script>
     // ---------- Data ----------
     const NAMES = [
-      "Dennis Quivis",
-      "Carla Quivis",
-      "Jeremiah Gayacan",
-      "Erixson Semillano",
-      "Adelyn Semillano",
-      "John Kemuel Semillano",
-      "Abiel Semillano",
-      "Ma. Jessica Grupe",
-      "Kenneth Oños",
-      "Jasiel Semillano Güell",
-      "Catherine Joy Alegario",
-      "Rovel Oños",
-      "Nean Chayil Alegario",
-      "Grace Alejano",
-      "Alexa Mae Alejano",
-      "Joemar A.Gayacan",
-      "Ma.Teresa Gayacan",
-      "Joy A.Gayacan",
-      "Christene Joy A.Gayacan",
-      "Joey Jamora",
-      "Janirie Javier",
-      "Esther Grace A. Tecson",
-      "Ej Pacina",
-      "Grace Claridad",
-      "Carmela Velasco",
-      "Thirdy Cañet",
-      "Jebca Angela V. Cañet",
-      "Wama Mea Lipa",
-      "Fernando G Bueno",
-      "April Joy Baruc",
-      "Janille Tiguelo",
-      "Bryan Alastier Gerson",
-      "Guilbert Tiguelo",
-      "Daryl Jocson",
-      "Kenneth Matthew Figueroa",
-      "Pete Alvin Olvido",
-      "Gil Esperta",
-      "Don Batayola",
-      "Heraldry Escarilla",
-      "Joseph Aparel, Jr.",
-      "John Michael Garcia",
-      "Niljan Aloria",
-      "Andrian Mahinay",
-      "Mel John Malunes",
-      "Jaena Rose Escala",
-      "Ergin Mae Escala",
-      "Freshly Enriquez",
-      "Shiera Mae Teodoso",
-      "Isaiah Garcia",
-      "Janet Felicano",
-      "Trixie Joy Mansueto",
-      "Randy Garcia",
-      "Abigail Hayahay",
-      "Ivan Contrevida",
-      "Edgiekyle Carabuena",
-      "Luzy Estelle Dellariarte",
-      "Salvacion Barientos",
-      "Gia Mae Rebato",
-      "Leonail Quijano",
-      "Wilma Baruc",
-      "Felomino G bueno Jr.",
-      "Jeno Landazabal",
-      "Saint Marie T. Peñosa",
-      "Gabriel Forrosuelo",
-      "John Rey Almonicar",
-      "Richie Brabat",
-      "Emie Badilles",
-      "Oscar Badilles Jr.",
-      "Erica Joy Pianoles",
-      "Princess Jeuel Pianoles",
-      "Kristy Villacencio",
-      "Kimberly Escarilla",
-      "Venia Khea De La Torre",
-      "Kimberly G. Gierza",
-      "Crislyn Catalonia",
-      "Nicole Gonzales",
-      "Joy Angely Legaspi",
-      "Jay R Legaspi",
-      "Glen Marie Balela",
-      "Ronie Canoy",
-      "Nida Arcenia",
-      "Gerald jurada",
-      "Honeybee Ibañez",
-      "Singabol, Jan Hardie",
-      "Eulalia Silades",
-      "Amet Provencion",
-      "Varlet Provencion",
-      "Joe-Ann Mag-usara",
-      "Jairies Mag-usara",
-      "Nenette Jumuad",
-      "Ma. Kristina Fabio",
-      "Krisselle Fabio",
-      "Rachelle Anne Pacheco",
-      "Ma Hazel Celis",
-      "Jhean Khar Canillo",
-      "Cyrus Jr Baltonado",
-      "Kesha Almarines",
-      "Danica Tambo",
-      "John Chriz Almarines",
-      "Bonie Siason",
-      "Rose Siason",
-      "Gerlie Mahipos",
-      "Kerl Shannies",
-      "Keren Joy Siason",
-      "Karel Abanid",
-      "Neña Mae Marfa",
-      "Rica leah Tanghal",
-      "Ranier Tanghal",
-      "Erreson Soguilon",
-      "Lory Rose Toque",
-      "Cherry Ann Maru",
-      "Joise Prudente",
-      "Lito Esperta",
-      "Lyngin Esperta",
-      "Marita Cose",
-      "Jenna Rose Norbe",
-      "Ian Cascaro",
-      "Pamela Almarines",
-      "Joy Mueño",
-      "James Mueño",
-      "Emelyn Gasapo",
-      "Junver Labto",
-      "Jerico Robles",
-      "Carl Gamilla",
-      "James Villaflor",
-      "Krishna Norbe",
-      "Leomark Santillana",
-      "Mark Levi Legaspi",
-      "Anathea Mahinay",
-      "Marivic Maru",
-      "Elijah Xean Santilliana",
-      "Iren Jimenez",
-      "Carl Castro",
-      "Sofía Camille Juson",
-      "Renilyn Depon",
-      "Rosalie Baldado",
-      "Ronel Baldado",
-      "Joseph Baldado",
-      "John Mark Benting",
-      "Rosianie Nogas",
-      "Jona Felicano",
-      "Seed Tidalgo",
-      "Saccharine Grace Baruc",
-      "Audrey Grace Emperado",
-      "Willy Gen Santillan",
-      "Jocelle Grace Tanquinco",
-      "Andrea Yu",
-      "Renerio Locsin, Jr.",
-      "Rodolfo Sauce, Jr.",
-      "Rigene Batarilan",
-      "Reymon Remegio",
-      "Renz Godwin Sajo",
-      "Michella Caballero",
-      "Christian Caballero",
-      "Mark Joseph Arboleda",
-      "Jessmer Lanada",
-      "Closea Giabia",
-      "Alan Giabia",
-      "Rayve Valencia",
-      "Karlos Martin Villamil",
-      "Kayce Estrobo",
-      "Ana Caspe",
-      "Danielle Sidney Salvador",
-      "Richard Ryan Celis",
-      "Rudylyn Delaben",
-      "Queenie Bito-on",
-      "Julieann Bito-on",
-      "Lorena Tarlac",
-      "Delia Cordova",
-      "Reniel Valencia",
-      "Daniella Cuenca",
-      "Jade Tarlac",
-      "Diarid Tarlac",
-      "Jianna Maguillano",
-      "Carolina Panes",
-      "Lj Heart Bito-on",
-      "Sharla Roco",
-      "Tyrone Trouper Roco",
-      "Juan Gabriel Roco",
-      "Jomar Arante",
-      "Jessa Sanchez",
-      "FACURIB, JESSICA",
-      "FACURIB, DANILO",
-      "FACURIB, ANNABELLE",
-      "FACURIB, JONATHAN",
-      "BUCATIJA, ANGELITO",
-      "ABAPO, REA JEAN",
-      "JENNY ABAPO",
-      "Aymie Mangolare",
-      "Tito Mangolare",
-      "Jenelyn Tio",
-      "Julie Ann Agohayon and Renante Agohayon",
-      "Samuel Bantulay",
-      "Faith Gayatao",
-      "Cristine Mae nepa",
-      "Micah Agosto",
-      "Jimuel Espinosa",
-      "Charles Hector Magalona",
-      "Jeezrah Chitchirita",
-      "Herman Depositar",
-      "Eujanna Espinosa",
-      "Teresa Mae Espinosa",
-      "Joseph Parva",
-      "James Comawas",
-      "Razel Facurib",
-      "Jay R Mangolare",
-      "Jaica Granada",
-      "Eva Mangolare",
-      "Gerald Mangolare",
-      "Florenda Mangolare",
-      "Janice Llena, Kristine Jane Llena, Katherine Joyce Llena",
-      "Eliza Mae Alpar",
-      "Jonnalin Parba",
-      "Jonalyn Dojello",
-      "Jonalyn Dojello",
-      "Marcelina Alquiaza",
-      "Yane Maderazo",
-      "Jan Jaden Maderazo",
-      "Shekinah Rose Denuevo",
-      "Dharalyn Maguillano",
-      "Jake Maguillano",
-      "Keo Argel",
-      "Maritoni Argel",
-      "Romeo denuevo",
-      "Pilita Denuevo",
-      "Jennybel Sombria",
-      "Sarah Jane Lumayno",
-      "Lindy Leorda",
-      "Joan Lopez",
-      "Arjohn Lopez",
-      "Hannah Menente",
-      "Ernie Menente",
-      "Alyssa Franchesca Fernandez",
-      "Jeanette Tuñacao",
-      "Honey Jean Tuñacao",
-      "Ruth Jane Pedrajas",
-      "Nathalie Jean pedrajas",
-      "Jessa Descaya",
-      "Wilfredo Ganar jr",
-      "Rene clavecillas",
-      "Wilfredo Argel",
-      "Leo Superiano",
-      "Nelia Alvarez",
-      "Marybelle Sellado",
-      "Nicole Aton",
-      "Yancy Cañete",
-      "Sighmund Lee Aguilar",
-      "Penny Go",
-      "Rapha Alvarez",
-      "Aeyo Bustamante",
-      "Melody Carmelo",
-      "April Lobaton",
-      "Rona Cruz",
-      "Jeym Pahilanga",
-      "Marie Cristina Pahilanga",
-      "Wilma Balbon",
-      "Kyla Silario",
-      "Susan Zeller",
-      "Joseph Aaron Celestial",
-      "Joseph Aaron Celestial",
-      "Jun Barnig",
-      "Marie Cristina Pahilanga",
-      "Sunny Camangyan",
-      "Florie Panes",
-      "Martino Panes",
-      "May Santillan",
-      "Jun Santillan",
-      "April Descaya",
-      "Kaylie Santillan",
-      "Hanna Señeres",
-      "Franco Señeres",
-      "Jasmine Moraña",
-      "Rose Parreño",
-      "Alan Parreño",
-      "Mitchelle Opialda",
-      "Luisa Opianga",
-      "Tina Pedroso",
-      "Monina Bartolo",
-      "Marianne Laurista",
-      "Iran Laurista",
-      "Maricor Abellano",
-      "Vicente Gulmatico",
-      "Rob Descaya",
-      "Cristine Donguines",
-      "Josephine Bucatija",
-      "Evangeline Omni",
-      "Rizan Divinagracia",
-      "Timothy Ganar",
-      "Helen Buyco",
-      "Emilia Senomio",
-      "Lucrecia Dusaran",
-      "Urbano Dusaran",
-      "Josephine Celestial",
-      "Barcelisa Luberas",
-      "Maria Luisa Acuin",
-      "Cindy Genit",
-      "Shekinah",
-      "Michael Angelo Genit",
-      "Jigger Leonor",
-      "Mark Foley",
-      "Teresita Foley",
-      "Cesary Jo Dequiña",
-      "Erika Amber Peñafiel",
-      "Mysa Gutierrez",
-      "Judith Leonor",
-      "Jevina Molina",
-      "Victoria Labis",
-      "Elizabeth Laurelia",
-      "Jullian Christian Albay",
-      "Ma. Nadine Cristina Albay",
-      "Mitchell Lameque",
-      "Karen Joy Lameque",
-      "Catherine Zeta Lameque",
-      "Ma. Fe Angelino",
-      "Luisa Gallego",
-      "Kacy Silario",
-      "John Mark Macion",
-      "Stephen Silario",
-      "Tyrone Duller",
-      "Myra Gonzales",
-      "Joshua Oquindo",
-      "EJ Facto",
-      "Roxanne Losauro",
-      "Ancher Ledesma",
-      "Elynor Obamos",
-      "Janet Cagalcal",
-      "Alona Celestial",
-      "Ryan Celestial",
-      "Novie Geguinto",
-      "Jesus Geguinto",
-      "Karen Montinola",
-      "Cecelle Relado",
-      "Michelle Torre",
-      "Shania Famoso",
-      "Bhea Gwyneth Amador",
-      "Nonito Osano",
-      "Toffy Luther Amador",
-      "Pacite, Nathaniel Fritz",
-      "Amador, Yana Mishika",
-      "Justine Mae Pagayon",
-      "Jojo Padilla",
-      "Rebekah Tupaz",
-      "Leomar Superiano",
-      "Marlyn Placido",
-      "Edna Gallego",
-      "Hazel Pacifico",
-      "Daphne Magtahas",
-      "Brian Arthur Villa",
-      "Mimi Villa",
-      "David Villa",
-      "Luz Cristales",
-      "Dustine Jimenea",
-      "Sophia Capulong",
-      "Candy Montillano",
-      "Zerlim Montillano",
-      "Rosalie Leonor",
-      "Andrew Junsay",
-      "Melissa Panes",
-      "Happy Junsay",
-      "Andrei Junsay",
-      "Ivy Grace Tingal",
-      "John Martin Advincula",
-      "Phil Geguiera",
-      "Shannen Gayle Parreño",
-      "Jojo Alan Parreño",
-      "Crystal Joy Caduhada",
-      "Teodora Salaver",
-      "Janine Tanaleon and Renato Tanaleon",
-      "Crismel Santillan",
-      "Madelaine Santillan",
-      "Joyce Ann Pedrajas",
-      "Gab Ledesma",
-      "Hyacinth Salmingo",
-      "Eunice Denuevo",
-      "Brix Llander P. Suating",
-      "Kryzha Crisseth Seasol",
-      "Ivan Salazar",
-      "Noki Flores",
-      "Rosalie Salazar",
-      "Kenneth Clark Dizon",
-      "Ana Marie Esmeralda",
-      "Kent Caduhada",
-      "Marissa Cuello",
-      "Nerilyn Cuello",
-      "Louela Marie Lagrimas",
-      "Nikay Velasco",
-      "Nike Denuevo",
-      "AJ Arnaiz",
-      "Nirelyn  Velasco",
-      "Rica Sotto",
-      "Elyn Borromeo",
-      "Riza Borromeo",
-      "Adrian Borromeo",
-      "Christy Lopez",
-      "Chris Lopez",
-      "John Paul Labapis",
-      "Ramboo lagrimas",
-      "Kiezha Subebe",
-      "Jamaica Velasco",
-      "Jobel Velasco",
-      "Yancy Cañete",
-      "Elsie Matti",
-      "John Gallego Jr.",
-      "Tweeny",
-      "Jasmin Jane Ikalina",
-      "Klen",
-      "Kemuel Ellis",
-      "Liane Negado",
-      "Mary Claire Gonzales",
-      "Joecel Acaling",
-      "Cris John Santillan",
-      "Mikko britanico",
-      "Rover kian Nahil",
-      "Floyd Lachica and Karen Lachica",
-      "Allain Lachica",
-      "Cony Lachica",
-      "Ma theresa Masa",
-      "Nadine, Escay",
-      "Risha Avanceña",
-      "Kobe Perez",
-      "John Angelo Aguirre",
-      "Niña Aguirre",
-      "Joy Chavez",
-      "Irish Arboleda",
-      "Sophia Masa",
-      "Elizabeth Badian",
-      "Jessica Lopez",
-      "Angel Lopez",
-      "Elenita Cabatac",
-      "Jethro Pechayco",
-      "Rey Pechayco",
-      "Leilanie Pechayco",
-      "Katrina Amonares",
-      "Tessie Amonares",
-      "Shenna Alcuizar",
-      "Ronie Bitoon",
-      "Genesis Chavez",
-      "Kyam Perez",
-      "Vincent Reguindin",
-      "Francene Adaro",
-      "Lucille Adaro",
-      "May Flor Yap",
-      "Jose Mayo",
-      "JN Pechayco",
-      "Ailex Dela Cruz",
-      "John Tyrone Colonel",
-      "Earl Justine Ortega",
-      "Fritzie Asuncion",
-      "Micca Bermil",
-      "DAVE BERMIL",
-      "Trixie Asuncion",
-      "Katrize Asuncion",
-      "Kim Inumerables",
-      "Genesis Chavez",
-      "Jemima Naomi Villanueva",
-      "Yvonne Grace Villanueva",
-      "Teodoro Suerto III",
-      "Gerardo Francisco",
-      "Analyn Abela",
-      "Jerelyn Francisco",
-      "Chinneth  Peñaverde",
-      "Mark Anthony Suerto",
-      "Arvin Labayan",
-      "JANE GALLANO",
-      "JOHN CHRISTOPHER REGUINDIN",
-      "EBENEZER JOY MASA-REGUINDIN",
-      "Arlene Conlu",
-      "Mayflor Yap",
-      "Lucille Adaro",
-      "Jose Mayo",
-      "Ricsson Magallon Oñasa",
-      "Arvin Alit",
-      "Judah Lyn Masa- Alit",
-      "Resty John Suerto",
-      "Leah Dulaca",
-      "Trisha Letrero",
-      "Rosemarie Tiolo",
-      "Jessa Villanueva",
-      "Althea Garcia",
-      "ELLE CUENCA",
-      "APRIL MASNAYON",
-      "DIRK NATHANIEL MASNAYON",
-      "Francene Adaro",
-      "JOY CHAVEZ",
-      "LYDIA ZAPATA",
-      "CHRISZA DE LA CRUZ",
-      "GRACE ABIERA"
+      "Dennis Quivis","Carla Quivis","Jeremiah Gayacan","Erixson Semillano","Adelyn Semillano","John Kemuel Semillano","Abiel Semillano","Ma. Jessica Grupe","Kenneth Oños","Jasiel Semillano Güell","Catherine Joy Alegario","Rovel Oños","Nean Chayil Alegario","Grace Alejano","Alexa Mae Alejano","Joemar A.Gayacan","Ma.Teresa Gayacan","Joy A.Gayacan","Christene Joy A.Gayacan","Joey Jamora","Janirie Javier","Esther Grace A. Tecson","Ej Pacina","Grace Claridad","Carmela Velasco","Thirdy Cañet","Jebca Angela V. Cañet","Wama Mea Lipa","Fernando G Bueno","April Joy Baruc","Janille Tiguelo","Bryan Alastier Gerson","Guilbert Tiguelo","Daryl Jocson","Kenneth Matthew Figueroa","Pete Alvin Olvido","Gil Esperta","Don Batayola","Heraldry Escarilla","Joseph Aparel, Jr.","John Michael Garcia","Niljan Aloria","Andrian Mahinay","Mel John Malunes","Jaena Rose Escala","Ergin Mae Escala","Freshly Enriquez","Shiera Mae Teodoso","Isaiah Garcia","Janet Felicano","Trixie Joy Mansueto","Randy Garcia","Abigail Hayahay","Ivan Contrevida","Edgiekyle Carabuena","Luzy Estelle Dellariarte","Salvacion Barientos","Gia Mae Rebato","Leonail Quijano","Wilma Baruc","Felomino G bueno Jr.","Jeno Landazabal","Saint Marie T. Peñosa","Gabriel Forrosuelo","John Rey Almonicar","Richie Brabat","Emie Badilles","Oscar Badilles Jr.","Erica Joy Pianoles","Princess Jeuel Pianoles","Kristy Villacencio","Kimberly Escarilla","Venia Khea De La Torre","Kimberly G. Gierza","Crislyn Catalonia","Nicole Gonzales","Joy Angely Legaspi","Jay R Legaspi","Glen Marie Balela","Ronie Canoy","Nida Arcenia","Gerald jurada","Honeybee Ibañez","Singabol, Jan Hardie","Eulalia Silades","Amet Provencion","Varlet Provencion","Joe-Ann Mag-usara","Jairies Mag-usara","Nenette Jumuad","Ma. Kristina Fabio","Krisselle Fabio","Rachelle Anne Pacheco","Ma Hazel Celis","Jhean Khar Canillo","Cyrus Jr Baltonado","Kesha Almarines","Danica Tambo","John Chriz Almarines","Bonie Siason","Rose Siason","Gerlie Mahipos","Kerl Shannies","Keren Joy Siason","Karel Abanid","Neña Mae Marfa","Rica leah Tanghal","Ranier Tanghal","Erreson Soguilon","Lory Rose Toque","Cherry Ann Maru","Joise Prudente","Lito Esperta","Lyngin Esperta","Marita Cose","Jenna Rose Norbe","Ian Cascaro","Pamela Almarines","Joy Mueño","James Mueño","Emelyn Gasapo","Junver Labto","Jerico Robles","Carl Gamilla","James Villaflor","Krishna Norbe","Leomark Santillana","Mark Levi Legaspi","Anathea Mahinay","Marivic Maru","Elijah Xean Santilliana","Iren Jimenez","Carl Castro","Sofía Camille Juson","Renilyn Depon","Rosalie Baldado","Ronel Baldado","Joseph Baldado","John Mark Benting","Rosianie Nogas","Jona Felicano","Seed Tidalgo","Saccharine Grace Baruc","Audrey Grace Emperado","Willy Gen Santillan","Jocelle Grace Tanquinco","Andrea Yu","Renerio Locsin, Jr.","Rodolfo Sauce, Jr.","Rigene Batarilan","Reymon Remegio","Renz Godwin Sajo","Michella Caballero","Christian Caballero","Mark Joseph Arboleda","Jessmer Lanada","Closea Giabia","Alan Giabia","Rayve Valencia","Karlos Martin Villamil","Kayce Estrobo","Ana Caspe","Danielle Sidney Salvador","Richard Ryan Celis","Rudylyn Delaben","Queenie Bito-on","Julieann Bito-on","Lorena Tarlac","Delia Cordova","Reniel Valencia","Daniella Cuenca","Jade Tarlac","Diarid Tarlac","Jianna Maguillano","Carolina Panes","Lj Heart Bito-on","Sharla Roco","Tyrone Trouper Roco","Juan Gabriel Roco","Jomar Arante","Jessa Sanchez","FACURIB, JESSICA","FACURIB, DANILO","FACURIB, ANNABELLE","FACURIB, JONATHAN","BUCATIJA, ANGELITO","ABAPO, REA JEAN","JENNY ABAPO","Aymie Mangolare","Tito Mangolare","Jenelyn Tio","Julie Ann Agohayon and Renante Agohayon","Samuel Bantulay","Faith Gayatao","Cristine Mae nepa","Micah Agosto","Jimuel Espinosa","Charles Hector Magalona","Jeezrah Chitchirita","Herman Depositar","Eujanna Espinosa","Teresa Mae Espinosa","Joseph Parva","James Comawas","Razel Facurib","Jay R Mangolare","Jaica Granada","Eva Mangolare","Gerald Mangolare","Florenda Mangolare","Janice Llena, Kristine Jane Llena, Katherine Joyce Llena","Eliza Mae Alpar","Jonnalin Parba","Jonalyn Dojello","Jonalyn Dojello","Marcelina Alquiaza","Yane Maderazo","Jan Jaden Maderazo","Shekinah Rose Denuevo","Dharalyn Maguillano","Jake Maguillano","Keo Argel","Maritoni Argel","Romeo denuevo","Pilita Denuevo","Jennybel Sombria","Sarah Jane Lumayno","Lindy Leorda","Joan Lopez","Arjohn Lopez","Hannah Menente","Ernie Menente","Alyssa Franchesca Fernandez","Jeanette Tuñacao","Honey Jean Tuñacao","Ruth Jane Pedrajas","Nathalie Jean pedrajas","Jessa Descaya","Wilfredo Ganar jr","Rene clavecillas","Wilfredo Argel","Leo Superiano","Nelia Alvarez","Marybelle Sellado","Nicole Aton","Yancy Cañete","Sighmund Lee Aguilar","Penny Go","Rapha Alvarez","Aeyo Bustamante","Melody Carmelo","April Lobaton","Rona Cruz","Jeym Pahilanga","Marie Cristina Pahilanga","Wilma Balbon","Kyla Silario","Susan Zeller","Joseph Aaron Celestial","Joseph Aaron Celestial","Jun Barnig","Marie Cristina Pahilanga","Sunny Camangyan","Florie Panes","Martino Panes","May Santillan","Jun Santillan","April Descaya","Kaylie Santillan","Hanna Señeres","Franco Señeres","Jasmine Moraña","Rose Parreño","Alan Parreño","Mitchelle Opialda","Luisa Opianga","Tina Pedroso","Monina Bartolo","Marianne Laurista","Iran Laurista","Maricor Abellano","Vicente Gulmatico","Rob Descaya","Cristine Donguines","Josephine Bucatija","Evangeline Omni","Rizan Divinagracia","Timothy Ganar","Helen Buyco","Emilia Senomio","Lucrecia Dusaran","Urbano Dusaran","Josephine Celestial","Barcelisa Luberas","Maria Luisa Acuin","Cindy Genit","Shekinah","Michael Angelo Genit","Jigger Leonor","Mark Foley","Teresita Foley","Cesary Jo Dequiña","Erika Amber Peñafiel","Mysa Gutierrez","Judith Leonor","Jevina Molina","Victoria Labis","Elizabeth Laurelia","Jullian Christian Albay","Ma. Nadine Cristina Albay","Mitchell Lameque","Karen Joy Lameque","Catherine Zeta Lameque","Ma. Fe Angelino","Luisa Gallego","Kacy Silario","John Mark Macion","Stephen Silario","Tyrone Duller","Myra Gonzales","Joshua Oquindo","EJ Facto","Roxanne Losauro","Ancher Ledesma","Elynor Obamos","Janet Cagalcal","Alona Celestial","Ryan Celestial","Novie Geguinto","Jesus Geguinto","Karen Montinola","Cecelle Relado","Michelle Torre","Shania Famoso","Bhea Gwyneth Amador","Nonito Osano","Toffy Luther Amador","Pacite, Nathaniel Fritz","Amador, Yana Mishika","Justine Mae Pagayon","Jojo Padilla","Rebekah Tupaz","Leomar Superiano","Marlyn Placido","Edna Gallego","Hazel Pacifico","Daphne Magtahas","Brian Arthur Villa","Mimi Villa","David Villa","Luz Cristales","Dustine Jimenea","Sophia Capulong","Candy Montillano","Zerlim Montillano","Rosalie Leonor","Andrew Junsay","Melissa Panes","Happy Junsay","Andrei Junsay","Ivy Grace Tingal","John Martin Advincula","Phil Geguiera","Shannen Gayle Parreño","Jojo Alan Parreño","Crystal Joy Caduhada","Teodora Salaver","Janine Tanaleon and Renato Tanaleon","Crismel Santillan","Madelaine Santillan","Joyce Ann Pedrajas","Gab Ledesma","Hyacinth Salmingo","Eunice Denuevo","Brix Llander P. Suating","Kryzha Crisseth Seasol","Ivan Salazar","Noki Flores","Rosalie Salazar","Kenneth Clark Dizon","Ana Marie Esmeralda","Kent Caduhada","Marissa Cuello","Nerilyn Cuello","Louela Marie Lagrimas","Nikay Velasco","Nike Denuevo","AJ Arnaiz","Nirelyn  Velasco","Rica Sotto","Elyn Borromeo","Riza Borromeo","Adrian Borromeo","Christy Lopez","Chris Lopez","John Paul Labapis","Ramboo lagrimas","Kiezha Subebe","Jamaica Velasco","Jobel Velasco","Yancy Cañete","Elsie Matti","John Gallego Jr.","Tweeny","Jasmin Jane Ikalina","Klen","Kemuel Ellis","Liane Negado","Mary Claire Gonzales","Joecel Acaling","Cris John Santillan","Mikko britanico","Rover kian Nahil","Floyd Lachica and Karen Lachica","Allain Lachica","Cony Lachica","Ma theresa Masa","Nadine, Escay","Risha Avanceña","Kobe Perez","John Angelo Aguirre","Niña Aguirre","Joy Chavez","Irish Arboleda","Sophia Masa","Elizabeth Badian","Jessica Lopez","Angel Lopez","Elenita Cabatac","Jethro Pechayco","Rey Pechayco","Leilanie Pechayco","Katrina Amonares","Tessie Amonares","Shenna Alcuizar","Ronie Bitoon","Genesis Chavez","Kyam Perez","Vincent Reguindin","Francene Adaro","Lucille Adaro","May Flor Yap","Jose Mayo","JN Pechayco","Ailex Dela Cruz","John Tyrone Colonel","Earl Justine Ortega","Fritzie Asuncion","Micca Bermil","DAVE BERMIL","Trixie Asuncion","Katrize Asuncion","Kim Inumerables","Genesis Chavez","Jemima Naomi Villanueva","Yvonne Grace Villanueva","Teodoro Suerto III","Gerardo Francisco","Analyn Abela","Jerelyn Francisco","Chinneth  Peñaverde","Mark Anthony Suerto","Arvin Labayan","JANE GALLANO","JOHN CHRISTOPHER REGUINDIN","EBENEZER JOY MASA-REGUINDIN","Arlene Conlu","Mayflor Yap","Lucille Adaro","Jose Mayo","Ricsson Magallon Oñasa","Arvin Alit","Judah Lyn Masa- Alit","Resty John Suerto","Leah Dulaca","Trisha Letrero","Rosemarie Tiolo","Jessa Villanueva","Althea Garcia","ELLE CUENCA","APRIL MASNAYON","DIRK NATHANIEL MASNAYON","Francene Adaro","JOY CHAVEZ","LYDIA ZAPATA","CHRISZA DE LA CRUZ","GRACE ABIERA"
     ];
 
     // ---------- Helpers ----------
-    const normalize = s => s
-      .toString()
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu,'')
-      .toLowerCase()
-      .trim();
-
-    const escapeRegex = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const normalize = s => s.toString().normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim();
+    const escapeRegex = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
     const highlight = (text, query) => {
       if(!query) return text;
       const nq = normalize(query);
-      // Build mapping between original text and normalized to place <mark> at right spots
-      // Simple approach: find indices via regex on normalized string
       const normText = normalize(text);
       const ix = [];
-      const pattern = new RegExp(escapeRegex(nq), 'g');
-      let m;
-      while((m = pattern.exec(normText)) !== null){
-        ix.push([m.index, m.index + nq.length]);
-      }
-      if(ix.length === 0) return text;
+      const pattern = new RegExp(escapeRegex(nq),'g');
+      let m; while((m = pattern.exec(normText)) !== null){ ix.push([m.index, m.index+nq.length]); }
+      if(ix.length===0) return text;
 
-      // Walk original string, marking segments that correspond to matched normalized spans
-      // We map by scanning original and normalized in parallel.
-      const original = [...text];
-      const decomposed = [...text.normalize('NFD')]; // includes diacritics separately
-      // Build map from decomposed index to original index
-      const map = [];
-      let o = 0;
+      const decomposed = [...text.normalize('NFD')];
+      const map=[]; let o=0;
       for(let d=0; d<decomposed.length; d++){
-        // count only non-diacritic as advancing original index
-        if(!/\p{Diacritic}/u.test(decomposed[d])) {
-          map[d] = o++;
-        } else {
-          map[d] = o-1;
-        }
+        if(!/\p{Diacritic}/u.test(decomposed[d])) map[d]=o++;
+        else map[d]=o-1;
       }
-      // Build normalized (no diacritics) and index map from normalized char -> original index
-      const normChars = [];
-      const normToOrig = [];
+      const normChars=[], normToOrig=[];
       for(let d=0; d<decomposed.length; d++){
-        const ch = decomposed[d];
+        const ch=decomposed[d];
         if(/\p{Diacritic}/u.test(ch)) continue;
-        normChars.push(ch.toLowerCase());
-        normToOrig.push(map[d]);
+        normChars.push(ch.toLowerCase()); normToOrig.push(map[d]);
       }
-      // Convert match spans (normalized) to original indices
-      let parts = [];
-      let last = 0;
+      let parts=[], last=0;
       ix.forEach(([a,b])=>{
-        const start = normToOrig[a];
-        const end = normToOrig[b-1] + 1;
+        const start=normToOrig[a]; const end=normToOrig[b-1]+1;
         parts.push(text.slice(last,start));
-        parts.push('<mark>' + text.slice(start,end) + '</mark>');
-        last = end;
+        parts.push('<mark>'+text.slice(start,end)+'</mark>');
+        last=end;
       });
       parts.push(text.slice(last));
       return parts.join('');
     };
 
     const uniqueCount = arr => new Set(arr).size;
-
-    const debounce = (fn, ms=120) => {
-      let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
-    };
+    const debounce = (fn,ms=120)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms);} };
 
     // ---------- App ----------
     $(function(){
-      const $q = $('#q');
-      const $clear = $('#clearBtn');
-      const $count = $('#count');
-      const $total = $('#total');
-      const $unique = $('#unique');
-      const $results = $('#results');
-
+      const $q=$('#q'), $clear=$('#clearBtn'), $count=$('#count'), $total=$('#total'), $unique=$('#unique'), $results=$('#results');
       $total.text(NAMES.length.toLocaleString());
       $unique.text(uniqueCount(NAMES).toLocaleString());
 
       function render(list, query){
-        const frag = document.createDocumentFragment();
-        list.forEach((name, i)=>{
-          const row = document.createElement('div');
-          row.className = 'row';
-          row.setAttribute('role','listitem');
-
-          const idx = document.createElement('div');
-          idx.className = 'idx';
-          idx.textContent = (i+1).toString().padStart(3,'0');
-
-          const nm = document.createElement('div');
-          nm.className = 'name';
-          nm.innerHTML = highlight(name, query);
-
-          row.appendChild(idx);
-          row.appendChild(nm);
-          frag.appendChild(row);
+        const frag=document.createDocumentFragment();
+        list.forEach((name,i)=>{
+          const row=document.createElement('div'); row.className='row'; row.setAttribute('role','listitem');
+          const idx=document.createElement('div'); idx.className='idx'; idx.textContent=(i+1).toString().padStart(3,'0');
+          const nm=document.createElement('div'); nm.className='name'; nm.innerHTML=highlight(name, query);
+          row.appendChild(idx); row.appendChild(nm); frag.appendChild(row);
         });
         $results.empty().append(frag);
         $count.text(`${list.length.toLocaleString()} result${list.length===1?'':'s'}`);
       }
 
       function filter(q){
-        const nq = normalize(q);
-        if(!nq) { render(NAMES, ''); return; }
-        const out = NAMES.filter(n => normalize(n).includes(nq));
-        render(out, q);
+        const nq=normalize(q);
+        if(!nq){ render(NAMES,''); return; }
+        render(NAMES.filter(n=>normalize(n).includes(nq)), q);
       }
 
-      // Initial render
-      render(NAMES, '');
+      render(NAMES,''); // initial
 
-      // Load search from URL hash if present
-      if(location.hash.length > 1){
-        const preset = decodeURIComponent(location.hash.slice(1));
-        $q.val(preset);
-        filter(preset);
+      if(location.hash.length>1){
+        const preset=decodeURIComponent(location.hash.slice(1));
+        $q.val(preset); filter(preset);
       }
 
       const onInput = debounce(()=>{
-        const val = $q.val();
-        filter(val);
-        // Persist in URL hash for easy sharing
-        history.replaceState(null,'', '#' + encodeURIComponent(val));
-      }, 120);
+        const val=$q.val(); filter(val); history.replaceState(null,'','#'+encodeURIComponent(val));
+      },120);
 
       $q.on('input', onInput);
-
-      $clear.on('click', function(){
-        $q.val('').trigger('input').focus();
-      });
-
-      $(document).on('keydown', function(e){
-        if(e.key === 'Escape'){
-          $q.val('').trigger('input');
-        }
-      });
+      $clear.on('click', ()=>{ $q.val('').trigger('input').focus(); });
+      $(document).on('keydown', e=>{ if(e.key==='Escape'){ $q.val('').trigger('input'); }});
     });
   </script>
 </body>
