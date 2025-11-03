@@ -8,6 +8,7 @@
     :root{
       --bg:#0f172a; --panel:#111827; --muted:#94a3b8; --text:#e5e7eb;
       --accent:#22d3ee; --ring:rgba(34,211,238,.35); --chip:#1f2937;
+      --line:#203044;
     }
     *{box-sizing:border-box}
     body{
@@ -15,9 +16,9 @@
       background:linear-gradient(180deg,#0b1220,var(--bg));color:var(--text);min-height:100vh;
       display:flex;align-items:center;justify-content:center;padding:32px 16px;
     }
-    .app{width:min(1100px,100%);background:linear-gradient(180deg,#0b0f1a,var(--panel));
+    .app{width:min(1200px,100%);background:linear-gradient(180deg,#0b0f1a,var(--panel));
       border:1px solid #1f2937;border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04)}
-    .header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+    .header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px;z-index: 1;}
     .title{font-weight:700;letter-spacing:.3px;font-size:20px}
     .muted{color:var(--muted)}
     .searchbar{display:flex;gap:10px;margin:10px 0 6px;width:100%}
@@ -33,53 +34,594 @@
     .btn:active{transform:translateY(1px)}
     .meta{display:flex;justify-content:space-between;align-items:center;margin:6px 2px 14px;font-size:14px;color:var(--muted);gap:8px;flex-wrap:wrap}
     .tags{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{background:var(--chip);border:1px solid #263142;color:#cfd8e3;padding:6px 10px;border-radius:999px;font-size:12px;letter-spacing:.2px}
-    .list{border:1px solid #243041;border-radius:14px;overflow:hidden;background:#0b1020;max-height:65vh;overflow:auto;scroll-behavior:smooth}
-    .row{padding:12px 16px;border-bottom:1px solid #1b2636;display:flex;gap:10px;align-items:center}
+    .chip{
+      background:var(--chip);border:1px solid #263142;color:#cfd8e3;padding:6px 10px;border-radius:999px;font-size:12px;letter-spacing:.2px;
+      cursor:pointer;user-select:none;display:inline-flex;gap:6px;align-items:center
+    }
+    .chip[data-active="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring)}
+    .list{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0b1020;max-height:65vh;overflow:auto;scroll-behavior:smooth}
+    .head,.row{display:grid;grid-template-columns:64px 1fr 180px;align-items:center}
+    .head{
+      position:sticky;top:0;background:#0e1525;border-bottom:1px solid var(--line);padding:10px 14px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#a3b2c7;z-index: 1;
+    }
+    .row{padding:12px 14px;border-bottom:1px solid #1b2636}
     .row:last-child{border-bottom:none}
-    .idx{width:56px;text-align:right;color:#7c8aa6;font-variant-numeric:tabular-nums;flex:0 0 56px}
-    .name{flex:1}
+    .idx{width:56px;text-align:right;color:#7c8aa6;font-variant-numeric:tabular-nums;justify-self:end}
+    .name{overflow-wrap:anywhere;padding-left: 15px;}
+    .chapter{opacity:.95}
     mark{background:rgba(34,211,238,.18);color:#d9fbff;padding:0 2px;border-radius:4px}
     .footer{margin-top:14px;font-size:12px;color:var(--muted);text-align:center}
-    @media (max-width:600px){.idx{display:none}.title{font-size:18px}}
+    @media (max-width:700px){
+      .head,.row{grid-template-columns:48px 1fr 120px}
+      .idx{font-size:12px}
+    }
+    @media (max-width:520px){
+      .head,.row{grid-template-columns:1fr}
+      .idx{display:none}
+      .chapter{opacity:.9}
+      .row .chapter::before{content:"Chapter: ";opacity:.6}
+    }
   </style>
 </head>
 <body>
   <main class="app" role="main">
     <div class="header">
-      <div class="title">WOLM CAMP NAME TRACKER 2025</div>
+      <div class="title">WOLM CAMP TRACKER 2025</div>
     </div>
 
     <div class="searchbar" role="search">
-      <input id="q" type="search" placeholder="Search names (e.g. 'Semillano', 'Güell', 'Legaspi')" autocomplete="off" />
+      <input id="q" type="search" placeholder="Search by name or chapter (e.g. 'Semillano', 'Silay', 'Güell')" autocomplete="off" />
       <button class="btn" id="clearBtn" aria-label="Clear search">Clear</button>
     </div>
 
     <div class="meta" aria-live="polite">
       <div id="count" class="muted">Loading…</div>
-
+      <div class="tags" id="chapterChips"></div>
     </div>
 
-    <section class="list" id="results" role="list" aria-label="Search results"></section>
+    <section class="list" id="results" role="list" aria-label="Search results">
+      <div class="head">
+        <div>#</div>
+        <div>Name</div>
+        <div>Chapter</div>
+      </div>
+      <!-- rows go here -->
+    </section>
 
     <div class="footer">
-      Built for WOLM Camp 2025
+      Built for WOLM Camp 2025.
     </div>
   </main>
 
   <!-- jQuery (CDN) -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script>
-    // ---------- Data ----------
-    const NAMES = [
-      "Dennis Quivis","Carla Quivis","Jeremiah Gayacan","Erixson Semillano","Adelyn Semillano","John Kemuel Semillano","Abiel Semillano","Ma. Jessica Grupe","Kenneth Oños","Jasiel Semillano Güell","Catherine Joy Alegario","Rovel Oños","Nean Chayil Alegario","Grace Alejano","Alexa Mae Alejano","Joemar A.Gayacan","Ma.Teresa Gayacan","Joy A.Gayacan","Christene Joy A.Gayacan","Joey Jamora","Janirie Javier","Esther Grace A. Tecson","Ej Pacina","Grace Claridad","Carmela Velasco","Thirdy Cañet","Jebca Angela V. Cañet","Wama Mea Lipa","Fernando G Bueno","April Joy Baruc","Janille Tiguelo","Bryan Alastier Gerson","Guilbert Tiguelo","Daryl Jocson","Kenneth Matthew Figueroa","Pete Alvin Olvido","Gil Esperta","Don Batayola","Heraldry Escarilla","Joseph Aparel, Jr.","John Michael Garcia","Niljan Aloria","Andrian Mahinay","Mel John Malunes","Jaena Rose Escala","Ergin Mae Escala","Freshly Enriquez","Shiera Mae Teodoso","Isaiah Garcia","Janet Felicano","Trixie Joy Mansueto","Randy Garcia","Abigail Hayahay","Ivan Contrevida","Edgiekyle Carabuena","Luzy Estelle Dellariarte","Salvacion Barientos","Gia Mae Rebato","Leonail Quijano","Wilma Baruc","Felomino G bueno Jr.","Jeno Landazabal","Saint Marie T. Peñosa","Gabriel Forrosuelo","John Rey Almonicar","Richie Brabat","Emie Badilles","Oscar Badilles Jr.","Erica Joy Pianoles","Princess Jeuel Pianoles","Kristy Villacencio","Kimberly Escarilla","Venia Khea De La Torre","Kimberly G. Gierza","Crislyn Catalonia","Nicole Gonzales","Joy Angely Legaspi","Jay R Legaspi","Glen Marie Balela","Ronie Canoy","Nida Arcenia","Gerald jurada","Honeybee Ibañez","Singabol, Jan Hardie","Eulalia Silades","Amet Provencion","Varlet Provencion","Joe-Ann Mag-usara","Jairies Mag-usara","Nenette Jumuad","Ma. Kristina Fabio","Krisselle Fabio","Rachelle Anne Pacheco","Ma Hazel Celis","Jhean Khar Canillo","Cyrus Jr Baltonado","Kesha Almarines","Danica Tambo","John Chriz Almarines","Bonie Siason","Rose Siason","Gerlie Mahipos","Kerl Shannies","Keren Joy Siason","Karel Abanid","Neña Mae Marfa","Rica leah Tanghal","Ranier Tanghal","Erreson Soguilon","Lory Rose Toque","Cherry Ann Maru","Joise Prudente","Lito Esperta","Lyngin Esperta","Marita Cose","Jenna Rose Norbe","Ian Cascaro","Pamela Almarines","Joy Mueño","James Mueño","Emelyn Gasapo","Junver Labto","Jerico Robles","Carl Gamilla","James Villaflor","Krishna Norbe","Leomark Santillana","Mark Levi Legaspi","Anathea Mahinay","Marivic Maru","Elijah Xean Santilliana","Iren Jimenez","Carl Castro","Sofía Camille Juson","Renilyn Depon","Rosalie Baldado","Ronel Baldado","Joseph Baldado","John Mark Benting","Rosianie Nogas","Jona Felicano","Seed Tidalgo","Saccharine Grace Baruc","Audrey Grace Emperado","Willy Gen Santillan","Jocelle Grace Tanquinco","Andrea Yu","Renerio Locsin, Jr.","Rodolfo Sauce, Jr.","Rigene Batarilan","Reymon Remegio","Renz Godwin Sajo","Michella Caballero","Christian Caballero","Mark Joseph Arboleda","Jessmer Lanada","Closea Giabia","Alan Giabia","Rayve Valencia","Karlos Martin Villamil","Kayce Estrobo","Ana Caspe","Danielle Sidney Salvador","Richard Ryan Celis","Rudylyn Delaben","Queenie Bito-on","Julieann Bito-on","Lorena Tarlac","Delia Cordova","Reniel Valencia","Daniella Cuenca","Jade Tarlac","Diarid Tarlac","Jianna Maguillano","Carolina Panes","Lj Heart Bito-on","Sharla Roco","Tyrone Trouper Roco","Juan Gabriel Roco","Jomar Arante","Jessa Sanchez","FACURIB, JESSICA","FACURIB, DANILO","FACURIB, ANNABELLE","FACURIB, JONATHAN","BUCATIJA, ANGELITO","ABAPO, REA JEAN","JENNY ABAPO","Aymie Mangolare","Tito Mangolare","Jenelyn Tio","Julie Ann Agohayon and Renante Agohayon","Samuel Bantulay","Faith Gayatao","Cristine Mae nepa","Micah Agosto","Jimuel Espinosa","Charles Hector Magalona","Jeezrah Chitchirita","Herman Depositar","Eujanna Espinosa","Teresa Mae Espinosa","Joseph Parva","James Comawas","Razel Facurib","Jay R Mangolare","Jaica Granada","Eva Mangolare","Gerald Mangolare","Florenda Mangolare","Janice Llena, Kristine Jane Llena, Katherine Joyce Llena","Eliza Mae Alpar","Jonnalin Parba","Jonalyn Dojello","Jonalyn Dojello","Marcelina Alquiaza","Yane Maderazo","Jan Jaden Maderazo","Shekinah Rose Denuevo","Dharalyn Maguillano","Jake Maguillano","Keo Argel","Maritoni Argel","Romeo denuevo","Pilita Denuevo","Jennybel Sombria","Sarah Jane Lumayno","Lindy Leorda","Joan Lopez","Arjohn Lopez","Hannah Menente","Ernie Menente","Alyssa Franchesca Fernandez","Jeanette Tuñacao","Honey Jean Tuñacao","Ruth Jane Pedrajas","Nathalie Jean pedrajas","Jessa Descaya","Wilfredo Ganar jr","Rene clavecillas","Wilfredo Argel","Leo Superiano","Nelia Alvarez","Marybelle Sellado","Nicole Aton","Yancy Cañete","Sighmund Lee Aguilar","Penny Go","Rapha Alvarez","Aeyo Bustamante","Melody Carmelo","April Lobaton","Rona Cruz","Jeym Pahilanga","Marie Cristina Pahilanga","Wilma Balbon","Kyla Silario","Susan Zeller","Joseph Aaron Celestial","Joseph Aaron Celestial","Jun Barnig","Marie Cristina Pahilanga","Sunny Camangyan","Florie Panes","Martino Panes","May Santillan","Jun Santillan","April Descaya","Kaylie Santillan","Hanna Señeres","Franco Señeres","Jasmine Moraña","Rose Parreño","Alan Parreño","Mitchelle Opialda","Luisa Opianga","Tina Pedroso","Monina Bartolo","Marianne Laurista","Iran Laurista","Maricor Abellano","Vicente Gulmatico","Rob Descaya","Cristine Donguines","Josephine Bucatija","Evangeline Omni","Rizan Divinagracia","Timothy Ganar","Helen Buyco","Emilia Senomio","Lucrecia Dusaran","Urbano Dusaran","Josephine Celestial","Barcelisa Luberas","Maria Luisa Acuin","Cindy Genit","Shekinah","Michael Angelo Genit","Jigger Leonor","Mark Foley","Teresita Foley","Cesary Jo Dequiña","Erika Amber Peñafiel","Mysa Gutierrez","Judith Leonor","Jevina Molina","Victoria Labis","Elizabeth Laurelia","Jullian Christian Albay","Ma. Nadine Cristina Albay","Mitchell Lameque","Karen Joy Lameque","Catherine Zeta Lameque","Ma. Fe Angelino","Luisa Gallego","Kacy Silario","John Mark Macion","Stephen Silario","Tyrone Duller","Myra Gonzales","Joshua Oquindo","EJ Facto","Roxanne Losauro","Ancher Ledesma","Elynor Obamos","Janet Cagalcal","Alona Celestial","Ryan Celestial","Novie Geguinto","Jesus Geguinto","Karen Montinola","Cecelle Relado","Michelle Torre","Shania Famoso","Bhea Gwyneth Amador","Nonito Osano","Toffy Luther Amador","Pacite, Nathaniel Fritz","Amador, Yana Mishika","Justine Mae Pagayon","Jojo Padilla","Rebekah Tupaz","Leomar Superiano","Marlyn Placido","Edna Gallego","Hazel Pacifico","Daphne Magtahas","Brian Arthur Villa","Mimi Villa","David Villa","Luz Cristales","Dustine Jimenea","Sophia Capulong","Candy Montillano","Zerlim Montillano","Rosalie Leonor","Andrew Junsay","Melissa Panes","Happy Junsay","Andrei Junsay","Ivy Grace Tingal","John Martin Advincula","Phil Geguiera","Shannen Gayle Parreño","Jojo Alan Parreño","Crystal Joy Caduhada","Teodora Salaver","Janine Tanaleon and Renato Tanaleon","Crismel Santillan","Madelaine Santillan","Joyce Ann Pedrajas","Gab Ledesma","Hyacinth Salmingo","Eunice Denuevo","Brix Llander P. Suating","Kryzha Crisseth Seasol","Ivan Salazar","Noki Flores","Rosalie Salazar","Kenneth Clark Dizon","Ana Marie Esmeralda","Kent Caduhada","Marissa Cuello","Nerilyn Cuello","Louela Marie Lagrimas","Nikay Velasco","Nike Denuevo","AJ Arnaiz","Nirelyn  Velasco","Rica Sotto","Elyn Borromeo","Riza Borromeo","Adrian Borromeo","Christy Lopez","Chris Lopez","John Paul Labapis","Ramboo lagrimas","Kiezha Subebe","Jamaica Velasco","Jobel Velasco","Yancy Cañete","Elsie Matti","John Gallego Jr.","Tweeny","Jasmin Jane Ikalina","Klen","Kemuel Ellis","Liane Negado","Mary Claire Gonzales","Joecel Acaling","Cris John Santillan","Mikko britanico","Rover kian Nahil","Floyd Lachica and Karen Lachica","Allain Lachica","Cony Lachica","Ma theresa Masa","Nadine, Escay","Risha Avanceña","Kobe Perez","John Angelo Aguirre","Niña Aguirre","Joy Chavez","Irish Arboleda","Sophia Masa","Elizabeth Badian","Jessica Lopez","Angel Lopez","Elenita Cabatac","Jethro Pechayco","Rey Pechayco","Leilanie Pechayco","Katrina Amonares","Tessie Amonares","Shenna Alcuizar","Ronie Bitoon","Genesis Chavez","Kyam Perez","Vincent Reguindin","Francene Adaro","Lucille Adaro","May Flor Yap","Jose Mayo","JN Pechayco","Ailex Dela Cruz","John Tyrone Colonel","Earl Justine Ortega","Fritzie Asuncion","Micca Bermil","DAVE BERMIL","Trixie Asuncion","Katrize Asuncion","Kim Inumerables","Genesis Chavez","Jemima Naomi Villanueva","Yvonne Grace Villanueva","Teodoro Suerto III","Gerardo Francisco","Analyn Abela","Jerelyn Francisco","Chinneth  Peñaverde","Mark Anthony Suerto","Arvin Labayan","JANE GALLANO","JOHN CHRISTOPHER REGUINDIN","EBENEZER JOY MASA-REGUINDIN","Arlene Conlu","Mayflor Yap","Lucille Adaro","Jose Mayo","Ricsson Magallon Oñasa","Arvin Alit","Judah Lyn Masa- Alit","Resty John Suerto","Leah Dulaca","Trisha Letrero","Rosemarie Tiolo","Jessa Villanueva","Althea Garcia","ELLE CUENCA","APRIL MASNAYON","DIRK NATHANIEL MASNAYON","Francene Adaro","JOY CHAVEZ","LYDIA ZAPATA","CHRISZA DE LA CRUZ","GRACE ABIERA"
-    ];
+    // ========= Paste your raw "Name <tab> Chapter" data here =========
+    const RAW = `
+Dennis Quivis\tBacolod
+Carla Quivis\tBacolod
+Jeremiah Gayacan\tBacolod
+Erixson Semillano\tBacolod
+Adelyn Semillano\tBacolod
+John Kemuel Semillano\tBacolod
+Abiel Semillano\tBacolod
+Ma. Jessica Grupe\tBacolod
+Kenneth Oños \tBacolod
+Jasiel Semillano Güell \tBacolod
+Catherine Joy Alegario\tBacolod
+Rovel Oños\tBacolod
+Nean Chayil Alegario\tBacolod
+Grace Alejano \tBacolod
+Alexa Mae Alejano \tBacolod
+Joemar A.Gayacan\tBacolod
+Ma.Teresa Gayacan\tBacolod
+Joy A.Gayacan\tBacolod
+Christene Joy A.Gayacan\tBacolod
+Joey Jamora\tBacolod
+Janirie Javier\tBacolod
+Esther Grace A. Tecson \tBacolod
 
-    // ---------- Helpers ----------
+Ej Pacina\tCadiz
+Grace Claridad\tCadiz
+Carmela Velasco\tCadiz
+Thirdy Cañet\tCadiz
+Jebca Angela V. Cañet\tCadiz
+Wama Mea Lipa\tCadiz
+Fernando G Bueno\tCadiz
+April Joy Baruc\tCadiz
+Janille Tiguelo\tCadiz
+Bryan Alastier Gerson\tCadiz
+Guilbert Tiguelo\tCadiz
+Daryl Jocson\tCadiz
+Kenneth Matthew Figueroa \tCadiz
+Pete Alvin Olvido\tCadiz
+Gil Esperta\tCadiz
+Don Batayola \tCadiz
+Heraldry Escarilla\tCadiz
+Joseph Aparel, Jr.\tCadiz
+John Michael Garcia\tCadiz
+Niljan Aloria\tCadiz
+Andrian Mahinay\tCadiz
+Mel John Malunes\tCadiz
+Jaena Rose Escala\tCadiz
+Ergin Mae Escala\tCadiz
+Freshly Enriquez\tCadiz
+Shiera Mae Teodoso\tCadiz
+Isaiah Garcia\tCadiz
+Janet Felicano\tCadiz
+Trixie Joy Mansueto\tCadiz
+Randy Garcia\tCadiz
+Abigail Hayahay\tCadiz
+Ivan Contrevida \tCadiz
+Edgiekyle Carabuena\tCadiz
+Luzy Estelle Dellariarte \tCadiz
+Salvacion Barientos\tCadiz
+Gia Mae Rebato\tCadiz
+Leonail Quijano\tCadiz
+Wilma Baruc \tCadiz
+Felomino G bueno Jr.\tCadiz
+Jeno Landazabal\tCadiz
+Saint Marie T. Peñosa\tCadiz
+Gabriel Forrosuelo\tCadiz
+John Rey Almonicar\tCadiz
+Richie Brabat\tCadiz
+Emie Badilles \tCadiz
+Oscar Badilles Jr.\tCadiz
+Erica Joy Pianoles \tCadiz
+Princess Jeuel Pianoles\tCadiz
+Kristy Villacencio \tCadiz
+Kimberly Escarilla \tCadiz
+Venia Khea De La Torre \tCadiz
+Kimberly G. Gierza\tCadiz
+Crislyn Catalonia \tCadiz
+Nicole Gonzales \tCadiz
+Joy Angely Legaspi\tCadiz
+Jay R Legaspi\tCadiz
+Glen Marie Balela\tCadiz
+Ronie Canoy\tCadiz
+Nida Arcenia\tCadiz
+Gerald jurada\tCadiz
+Honeybee Ibañez\tCadiz
+Singabol, Jan Hardie\tCadiz
+Eulalia Silades\tCadiz
+Amet Provencion\tCadiz
+Varlet Provencion\tCadiz
+Joe-Ann Mag-usara\tCadiz
+Jairies Mag-usara\tCadiz
+Nenette Jumuad\tCadiz
+Ma. Kristina Fabio\tCadiz
+Krisselle Fabio\tCadiz
+Rachelle Anne Pacheco\tCadiz
+Ma Hazel Celis\tCadiz
+Jhean Khar Canillo \tCadiz
+Cyrus Jr Baltonado \tCadiz
+Kesha Almarines\tCadiz
+Danica Tambo \tCadiz
+John Chriz Almarines\tCadiz
+Bonie Siason\tCadiz
+Rose Siason\tCadiz
+Gerlie Mahipos\tCadiz
+Kerl Shannies\tCadiz
+Keren Joy Siason\tCadiz
+Karel Abanid\tCadiz
+Neña Mae Marfa\tCadiz
+Rica leah Tanghal \tCadiz
+Ranier Tanghal \tCadiz
+Erreson Soguilon\tCadiz
+Lory Rose Toque\tCadiz
+Cherry Ann Maru\tCadiz
+Joise Prudente \tCadiz
+Lito Esperta\tCadiz
+Lyngin Esperta\tCadiz
+Marita Cose\tCadiz
+Jenna Rose Norbe\tCadiz
+Ian Cascaro \tCadiz
+Pamela Almarines \tCadiz
+Joy Mueño\tCadiz
+James Mueño \tCadiz
+Emelyn Gasapo \tCadiz
+Junver Labto\tCadiz
+Jerico Robles\tCadiz
+Carl Gamilla\tCadiz
+James Villaflor\tCadiz
+Krishna Norbe \tCadiz
+Leomark Santillana \tCadiz
+Mark Levi Legaspi \tCadiz
+Anathea Mahinay\tCadiz
+Marivic Maru\tCadiz
+Elijah Xean Santillana \tCadiz
+Iren Jimenez \tCadiz
+Carl Castro\tCadiz
+Sofía Camille Juson\tCadiz
+Renilyn Depon\tCadiz
+Rosalie Baldado\tCadiz
+Ronel Baldado\tCadiz
+Joseph Baldado\tCadiz
+John Mark Benting \tCadiz
+Rosianie Nogas\tCadiz
+Jona Felicano \tCadiz
+Seed Tidalgo\tCadiz
+Saccharine Grace Baruc\tCadiz
+Audrey Grace Emperado\tCadiz
+Willy Gen Santillan\tCadiz
+Jocelle Grace Tanquinco\tCadiz
+Andrea Yu\tCadiz
+Renerio Locsin, Jr.\tCadiz
+Rodolfo Sauce, Jr.\tCadiz
+Rigene Batarilan\tCadiz
+Reymon Remegio \tCadiz
+Renz Godwin Sajo \tCadiz
+Michella Caballero\tCadiz
+Christian Caballero\tCadiz
+Mark Joseph Arboleda\tCadiz
+Jessmer Lanada\tCadiz
+Closea Giabia\tCadiz
+Alan Giabia\tCadiz
+Rayve Valencia\tCadiz
+Karlos Martin Villamil\tCadiz
+Kayce Estrobo \tCadiz
+Ana Caspe\tCadiz
+Danielle Sidney Salvador\tCadiz
+Richard Ryan Celis\tCadiz
+Rudylyn Delaben\tCadiz
+
+Queenie Bito-on \tManapla
+Julieann Bito-on \tManapla
+Lorena Tarlac\tManapla
+Delia Cordova \tManapla
+Reniel Valencia \tManapla
+Daniella Cuenca \tManapla
+Jade Tarlac \tManapla
+Diarid Tarlac \tManapla
+Jianna Maguillano \tManapla
+Carolina Panes\tManapla
+Lj Heart Bito-on \tManapla
+Sharla Roco\tManapla
+Tyrone Trouper Roco \tManapla
+Juan Gabriel Roco\tManapla
+
+Jomar Arante\tSagay/Escalante
+Jessa Sanchez\tSagay/Escalante
+FACURIB, JESSICA\tSagay/Escalante
+FACURIB, DANILO\tSagay/Escalante
+FACURIB, ANNABELLE\tSagay/Escalante
+FACURIB, JONATHAN\tSagay/Escalante
+BUCATIJA, ANGELITO\tSagay/Escalante
+ABAPO, REA JEAN\tSagay/Escalante
+JENNY ABAPO\tSagay/Escalante
+Aymie Mangolare\tSagay/Escalante
+Tito Mangolare\tSagay/Escalante
+Jenelyn Tio\tSagay/Escalante
+Julie Ann Agohayon and Renante Agohayon\tSagay/Escalante
+Samuel Bantulay\tSagay/Escalante
+Faith Gayatao\tSagay/Escalante
+Cristine Mae nepa\tSagay/Escalante
+Micah Agosto\tSagay/Escalante
+Jimuel Espinosa\tSagay/Escalante
+Charles Hector Magalona\tSagay/Escalante
+Jeezrah Chitchirita\tSagay/Escalante
+Herman Depositar \tSagay/Escalante
+Eujanna Espinosa \tSagay/Escalante
+Teresa Mae Espinosa \tSagay/Escalante
+Joseph Parva\tSagay/Escalante
+James Comawas\tSagay/Escalante
+Razel Facurib\tSagay/Escalante
+Jay R Mangolare\tSagay/Escalante
+Jaica Granada\tSagay/Escalante
+Eva Mangolare\tSagay/Escalante
+Gerald Mangolare\tSagay/Escalante
+Florenda Mangolare\tSagay/Escalante
+Janice Llena, Kristine Jane Llena, Katherine Joyce Llena\tSagay/Escalante
+Eliza Mae Alpar\tSagay/Escalante
+Jonnalin Parba\tSagay/Escalante
+Jonalyn Dojello\tSagay/Escalante
+Jonalyn Dojello \tSagay/Escalante
+Marcelina Alquiaza\tSagay/Escalante
+
+Yane Maderazo\tSan Carlos
+Jan Jaden Maderazo \tSan Carlos
+
+Shekinah Rose Denuevo\tSilay
+Dharalyn Maguillano \tSilay
+Jake Maguillano \tSilay
+Keo Argel\tSilay
+Maritoni Argel\tSilay
+Romeo denuevo\tSilay
+Pilita Denuevo\tSilay
+Jennybel Sombria\tSilay
+Sarah Jane Lumayno \tSilay
+Lindy Leorda\tSilay
+Joan Lopez\tSilay
+Arjohn Lopez\tSilay
+Hannah Menente\tSilay
+Ernie Menente\tSilay
+Alyssa Franchesca Fernandez\tSilay
+Jeanette Tuñacao\tSilay
+Honey Jean Tuñacao\tSilay
+Ruth Jane Pedrajas\tSilay
+Nathalie Jean pedrajas\tSilay
+Jessa Descaya\tSilay
+Wilfredo Ganar jr\tSilay
+Rene clavecillas\tSilay
+Wilfredo Argel\tSilay
+Leo Superiano\tSilay
+Nelia Alvarez\tSilay
+Marybelle Sellado\tSilay
+Nicole Aton\tSilay
+Yancy Cañete\tSilay
+Sighmund Lee Aguilar\tSilay
+Penny Go\tSilay
+Rapha Alvarez\tSilay
+Aeyo Bustamante\tSilay
+Melody Carmelo\tSilay
+April Lobaton\tSilay
+Rona Cruz\tSilay
+Jeym Pahilanga\tSilay
+Marie Cristina Pahilanga\tSilay
+Wilma Balbon\tSilay
+Kyla Silario\tSilay
+Susan Zeller\tSilay
+Joseph Aaron Celestial\tSilay
+Joseph Aaron Celestial\tSilay
+Jun Barnig\tSilay
+Marie Cristina Pahilanga\tSilay
+Sunny Camangyan\tSilay
+Florie Panes\tSilay
+Martino Panes\tSilay
+May Santillan\tSilay
+Jun Santillan\tSilay
+April Descaya\tSilay
+Kaylie Santillan\tSilay
+Hanna Señeres\tSilay
+Franco Señeres\tSilay
+Jasmine Moraña\tSilay
+Rose Parreño\tSilay
+Alan Parreño\tSilay
+Mitchelle Opialda\tSilay
+Luisa Opianga\tSilay
+Tina Pedroso\tSilay
+Monina Bartolo\tSilay
+Marianne Laurista\tSilay
+Iran Laurista\tSilay
+Maricor Abellano\tSilay
+Vicente Gulmatico\tSilay
+Rob Descaya\tSilay
+Cristine Donguines\tSilay
+Josephine Bucatija\tSilay
+Evangeline Omni\tSilay
+Rizan Divinagracia\tSilay
+Timothy Ganar\tSilay
+Helen Buyco\tSilay
+Emilia Senomio\tSilay
+Lucrecia Dusaran\tSilay
+Urbano Dusaran\tSilay
+Josephine Celestial\tSilay
+Barcelisa Luberas\tSilay
+Maria Luisa Acuin\tSilay
+Cindy Genit\tSilay
+Shekinah\tSilay
+Michael Angelo Genit\tSilay
+Jigger Leonor\tSilay
+Mark Foley\tSilay
+Teresita Foley\tSilay
+Cesary Jo Dequiña\tSilay
+Erika Amber Peñafiel\tSilay
+Mysa Gutierrez\tSilay
+Judith Leonor\tSilay
+Jevina Molina\tSilay
+Victoria Labis\tSilay
+Elizabeth Laurelia\tSilay
+Jullian Christian Albay\tSilay
+Ma. Nadine Cristina Albay\tSilay
+Mitchell Lameque\tSilay
+Karen Joy Lameque\tSilay
+Catherine Zeta Lameque\tSilay
+Ma. Fe Angelino\tSilay
+Luisa Gallego\tSilay
+Kacy Silario\tSilay
+John Mark Macion\tSilay
+Stephen Silario\tSilay
+Tyrone Duller\tSilay
+Myra Gonzales\tSilay
+Joshua Oquindo\tSilay
+EJ Facto\tSilay
+Roxanne Losauro\tSilay
+Ancher Ledesma\tSilay
+Elynor Obamos\tSilay
+Janet Cagalcal\tSilay
+Alona Celestial\tSilay
+Ryan Celestial\tSilay
+Novie Geguinto\tSilay
+Jesus Geguinto\tSilay
+Karen Montinola\tSilay
+Cecelle Relado\tSilay
+Michelle Torre \tSilay
+Shania Famoso\tSilay
+Bhea Gwyneth Amador\tSilay
+Nonito Osano\tSilay
+Toffy Luther Amador\tSilay
+Pacite, Nathaniel Fritz\tSilay
+Amador, Yana Mishika\tSilay
+Justine Mae Pagayon\tSilay
+Jojo Padilla\tSilay
+Rebekah Tupaz\tSilay
+Leomar Superiano\tSilay
+Marlyn Placido\tSilay
+Edna Gallego\tSilay
+Hazel Pacifico\tSilay
+Daphne Magtahas\tSilay
+Brian Arthur Villa\tSilay
+Mimi Villa\tSilay
+David Villa\tSilay
+Luz Cristales\tSilay
+Dustine Jimenea\tSilay
+Sophia Capulong \tSilay
+Candy Montillano\tSilay
+Zerlim Montillano\tSilay
+Rosalie Leonor \tSilay
+Andrew Junsay\tSilay
+Melissa Panes\tSilay
+Happy Junsay\tSilay
+Andrei Junsay \tSilay
+Ivy Grace Tingal\tSilay
+John Martin Advincula\tSilay
+Phil Geguiera \tSilay
+Shannen Gayle Parreño \tSilay
+Jojo Alan Parreño \tSilay
+Crystal Joy Caduhada\tSilay
+Teodora Salaver\tSilay
+Janine Tanaleon and Renato Tanaleon\tSilay
+Crismel Santillan\tSilay
+Madelaine Santillan\tSilay
+Joyce Ann Pedrajas\tSilay
+Gab Ledesma\tSilay
+Hyacinth Salmingo\tSilay
+Eunice Denuevo\tSilay
+Brix Llander P. Suating\tSilay
+Kryzha Crisseth Seasol \tSilay
+Ivan Salazar\tSilay
+Noki Flores\tSilay
+Rosalie Salazar\tSilay
+Kenneth Clark Dizon\tSilay
+Ana Marie Esmeralda\tSilay
+Kent Caduhada\tSilay
+Marissa Cuello\tSilay
+Nerilyn Cuello\tSilay
+Louela Marie Lagrimas \tSilay
+Nikay Velasco\tSilay
+Nike Denuevo\tSilay
+AJ Arnaiz\tSilay
+Nirelyn  Velasco\tSilay
+Rica Sotto\tSilay
+Elyn Borromeo\tSilay
+Riza Borromeo\tSilay
+Adrian Borromeo\tSilay
+Christy Lopez\tSilay
+Chris Lopez \tSilay
+John Paul Labapis \tSilay
+Ramboo lagrimas \tSilay
+Kiezha Subebe\tSilay
+Jamaica Velasco\tSilay
+Jobel Velasco \tSilay
+Yancy Cañete\tSilay
+Elsie Matti\tSilay
+John Gallego Jr.\tSilay
+Tweeny\tSilay
+Jasmin Jane Ikalina\tSilay
+Klen\tSilay
+Kemuel Ellis \tSilay
+Liane Negado \tSilay
+Mary Claire Gonzales \tSilay
+Joecel Acaling\tSilay
+Cris John Santillan\tSilay
+Mikko britanico\tSilay
+Rover kian Nahil\tSilay
+Floyd Lachica and Karen Lachica\tSilay
+Allain Lachica\tSilay
+Cony Lachica\tSilay
+
+Ma theresa Masa\tTalisay
+Nadine, Escay \tTalisay
+Risha Avanceña\tTalisay
+Kobe Perez \tTalisay
+John Angelo Aguirre\tTalisay
+Niña Aguirre\tTalisay
+Joy Chavez\tTalisay
+Irish Arboleda\tTalisay
+Sophia Masa\tTalisay
+Elizabeth Badian\tTalisay
+Jessica Lopez\tTalisay
+Angel Lopez \tTalisay
+Elenita Cabatac\tTalisay
+Jethro Pechayco\tTalisay
+Rey Pechayco \tTalisay
+Leilanie Pechayco \tTalisay
+Katrina Amonares\tTalisay
+Tessie Amonares\tTalisay
+Shenna Alcuizar \tTalisay
+Ronie Bitoon\tTalisay
+Genesis Chavez \tTalisay
+Kyam Perez \tTalisay
+Vincent Reguindin\tTalisay
+Francene Adaro\tTalisay
+Lucille Adaro\tTalisay
+May Flor Yap\tTalisay
+Jose Mayo\tTalisay
+JN Pechayco \tTalisay
+Ailex Dela Cruz \tTalisay
+John Tyrone Colonel\tTalisay
+Earl Justine Ortega \tTalisay
+Fritzie Asuncion\tTalisay
+Micca Bermil\tTalisay
+DAVE BERMIL\tTalisay
+Trixie Asuncion\tTalisay
+Katrize Asuncion\tTalisay
+Kim Inumerables \tTalisay
+Genesis Chavez\tTalisay
+Jemima Naomi Villanueva \tTalisay
+Yvonne Grace Villanueva\tTalisay
+Teodoro Suerto III\tTalisay
+Gerardo Francisco\tTalisay
+Analyn Abela\tTalisay
+Jerelyn Francisco\tTalisay
+Chinneth  Peñaverde \tTalisay
+Mark Anthony Suerto\tTalisay
+Arvin Labayan\tTalisay
+JANE GALLANO\tTalisay
+JOHN CHRISTOPHER REGUINDIN\tTalisay
+EBENEZER JOY MASA-REGUINDIN\tTalisay
+Arlene Conlu\tTalisay
+Mayflor Yap\tTalisay
+Lucille Adaro\tTalisay
+Jose Mayo\tTalisay
+Ricsson Magallon Oñasa \tTalisay
+Arvin Alit\tTalisay
+Judah Lyn Masa- Alit\tTalisay
+Resty John Suerto\tTalisay
+Leah Dulaca\tTalisay
+Trisha Letrero\tTalisay
+Rosemarie Tiolo\tTalisay
+Jessa Villanueva\tTalisay
+Althea Garcia\tTalisay
+ELLE CUENCA\tTalisay
+APRIL MASNAYON\tTalisay
+DIRK NATHANIEL MASNAYON\tTalisay
+Francene Adaro\tTalisay
+JOY CHAVEZ\tTalisay
+LYDIA ZAPATA\tTalisay
+CHRISZA DE LA CRUZ\tTalisay
+GRACE ABIERA\tTalisay
+`.trim();
+
+    // ========= Helpers =========
     const normalize = s => s.toString().normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim();
     const escapeRegex = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 
-    const highlight = (text, query) => {
+    // Parse RAW into [{name, chapter}]
+    function parseRaw(raw){
+      const lines = raw.split(/\r?\n/);
+      const rows = [];
+      for(const line of lines){
+        const t = line.trim();
+        if(!t) continue;
+        // Split on tab OR last 2+ spaces; fallback to last whitespace group
+        let parts = t.split(/\t/);
+        if(parts.length < 2){
+          const m = t.match(/^(.*?)[\s]{2,}([A-Za-z/ ]+)$/) || t.match(/^(.*)\s+([A-Za-z/ ]+)$/);
+          if(m) parts = [m[1], m[2]];
+        }
+        const name = (parts[0]||'').trim().replace(/\s+/g,' ');
+        const chapter = (parts[1]||'').trim().replace(/\s+/g,' ');
+        if(name && chapter) rows.push({name, chapter});
+      }
+      return rows;
+    }
+
+    const DATA = parseRaw(RAW);
+    const CHAPTERS = Array.from(new Set(DATA.map(d=>d.chapter))).sort((a,b)=>a.localeCompare(b));
+
+    // Highlight helper (accent-insensitive)
+    function highlight(text, query){
       if(!query) return text;
       const nq = normalize(query);
       const normText = normalize(text);
@@ -94,11 +636,11 @@
         if(!/\p{Diacritic}/u.test(decomposed[d])) map[d]=o++;
         else map[d]=o-1;
       }
-      const normChars=[], normToOrig=[];
+      const normToOrig=[];
       for(let d=0; d<decomposed.length; d++){
         const ch=decomposed[d];
         if(/\p{Diacritic}/u.test(ch)) continue;
-        normChars.push(ch.toLowerCase()); normToOrig.push(map[d]);
+        normToOrig.push(map[d]);
       }
       let parts=[], last=0;
       ix.forEach(([a,b])=>{
@@ -109,49 +651,131 @@
       });
       parts.push(text.slice(last));
       return parts.join('');
-    };
+    }
 
-    const uniqueCount = arr => new Set(arr).size;
     const debounce = (fn,ms=120)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms);} };
 
-    // ---------- App ----------
+    // ========= App =========
     $(function(){
-      const $q=$('#q'), $clear=$('#clearBtn'), $count=$('#count'), $total=$('#total'), $unique=$('#unique'), $results=$('#results');
-      $total.text(NAMES.length.toLocaleString());
-      $unique.text(uniqueCount(NAMES).toLocaleString());
+      const $q = $('#q');
+      const $clear = $('#clearBtn');
+      const $count = $('#count');
+      const $results = $('#results');
+      const $chips = $('#chapterChips');
 
-      function render(list, query){
-        const frag=document.createDocumentFragment();
-        list.forEach((name,i)=>{
-          const row=document.createElement('div'); row.className='row'; row.setAttribute('role','listitem');
-          const idx=document.createElement('div'); idx.className='idx'; idx.textContent=(i+1).toString().padStart(3,'0');
-          const nm=document.createElement('div'); nm.className='name'; nm.innerHTML=highlight(name, query);
-          row.appendChild(idx); row.appendChild(nm); frag.appendChild(row);
+      // Build chapter filter chips (with counts)
+      function chapterCounts(currentQuery){
+        const nq = normalize(currentQuery || '');
+        const counts = {};
+        for(const ch of CHAPTERS) counts[ch]=0;
+        for(const r of DATA){
+          const matchesQuery = !nq || normalize(r.name).includes(nq) || normalize(r.chapter).includes(nq);
+          if(matchesQuery) counts[r.chapter] = (counts[r.chapter]||0)+1;
+        }
+        return counts;
+      }
+
+      let activeChapter = 'ALL';
+
+      function renderChips(query){
+        const counts = chapterCounts(query);
+        $chips.empty();
+        // All chip
+        const total = Object.values(counts).reduce((a,b)=>a+b,0) || DATA.length;
+        $chips.append(makeChip('ALL', total, activeChapter==='ALL'));
+        // Per-chapter chips
+        for(const ch of CHAPTERS){
+          $chips.append(makeChip(ch, counts[ch]||0, activeChapter===ch));
+        }
+      }
+
+      function makeChip(label, count, active){
+        const $c = $(`<span class="chip" data-value="${label}"><strong>${label}</strong><span>• ${count}</span></span>`);
+        $c.attr('data-active', active ? 'true' : 'false');
+        $c.on('click', ()=>{
+          activeChapter = label;
+          render($q.val());
         });
-        $results.empty().append(frag);
-        $count.text(`${list.length.toLocaleString()} result${list.length===1?'':'s'}`);
+        return $c;
       }
 
-      function filter(q){
-        const nq=normalize(q);
-        if(!nq){ render(NAMES,''); return; }
-        render(NAMES.filter(n=>normalize(n).includes(nq)), q);
+      function render(query){
+        renderChips(query);
+
+        const nq = normalize(query || '');
+        let list = DATA.filter(r => {
+          const matchesQuery = !nq || normalize(r.name).includes(nq) || normalize(r.chapter).includes(nq);
+          const matchesChapter = activeChapter==='ALL' || r.chapter===activeChapter;
+          return matchesQuery && matchesChapter;
+        });
+
+        // rows
+        const frag = document.createDocumentFragment();
+        // Remove old rows (keep the sticky header)
+        $results.children('.row').remove();
+
+        list.forEach((r, i)=>{
+          const row = document.createElement('div');
+          row.className = 'row';
+          row.setAttribute('role','listitem');
+
+          const idx = document.createElement('div');
+          idx.className = 'idx';
+          idx.textContent = (i+1).toString().padStart(3,'0');
+
+          const name = document.createElement('div');
+          name.className = 'name';
+          name.innerHTML = highlight(r.name, query);
+
+          const chapter = document.createElement('div');
+          chapter.className = 'chapter';
+          chapter.innerHTML = highlight(r.chapter, query);
+
+          row.appendChild(idx);
+          row.appendChild(name);
+          row.appendChild(chapter);
+          frag.appendChild(row);
+        });
+
+        $results.append(frag);
+        $count.text(`${list.length.toLocaleString()} result${list.length===1?'':'s'} • ${activeChapter==='ALL'?'All chapters':activeChapter}`);
       }
 
-      render(NAMES,''); // initial
+      // Initial render
+      render('');
 
+      // Load search/chapter from URL hash if present: #q=...&chapter=...
       if(location.hash.length>1){
-        const preset=decodeURIComponent(location.hash.slice(1));
-        $q.val(preset); filter(preset);
+        try{
+          const params = new URLSearchParams(location.hash.slice(1));
+          const q0 = params.get('q') || '';
+          const ch0 = params.get('chapter') || 'ALL';
+          activeChapter = CHAPTERS.includes(ch0) || ch0==='ALL' ? ch0 : 'ALL';
+          $q.val(q0);
+          render(q0);
+        }catch(e){/* ignore */}
       }
 
       const onInput = debounce(()=>{
-        const val=$q.val(); filter(val); history.replaceState(null,'','#'+encodeURIComponent(val));
-      },120);
+        const val = $q.val();
+        render(val);
+        const params = new URLSearchParams();
+        if(val) params.set('q', val);
+        if(activeChapter!=='ALL') params.set('chapter', activeChapter);
+        history.replaceState(null,'', '#' + params.toString());
+      }, 120);
 
       $q.on('input', onInput);
-      $clear.on('click', ()=>{ $q.val('').trigger('input').focus(); });
-      $(document).on('keydown', e=>{ if(e.key==='Escape'){ $q.val('').trigger('input'); }});
+
+      $clear.on('click', function(){
+        $q.val('').trigger('input').focus();
+      });
+
+      $(document).on('keydown', function(e){
+        if(e.key === 'Escape'){
+          $q.val('').trigger('input');
+        }
+      });
     });
   </script>
 </body>
